@@ -9,7 +9,7 @@ Two INDEPENDENT Maven projects (no shared parent pom), one folder each, built se
 ```
 Pruebafinal/
 ├── .kiro/steering/*.md            (these files)
-├── .kiro/specs/helpflow/          requirements.md, design.md, tasks.md
+├── docs/design-notes.md           short log: Assumptions + Architecture decisions
 ├── docs/
 │   ├── assessment/                official statement, guide, rubric
 │   ├── diagrams/                  hexagonal-architecture.mmd, ticket-lifecycle.mmd,

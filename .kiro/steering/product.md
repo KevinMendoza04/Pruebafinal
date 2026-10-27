@@ -25,4 +25,4 @@ If a file is missing, STOP and tell the owner. Never invent its content.
 
 ## Hard rules about scope
 - Do not invent business features beyond the statement. Technical pieces needed to satisfy a requirement are allowed.
-- Anything not covered by a closed decision in these steering files: choose the simplest option that satisfies the statement, record it in `.kiro/specs/helpflow/design.md` under "Assumptions", and mention it in the phase report. Ask the owner only if the choice is unsafe or irreversible.
+- Anything not covered by a closed decision in these steering files: choose the simplest option that satisfies the statement, record it in `docs/design-notes.md` under "Assumptions", and mention it in the phase report. Ask the owner only if the choice is unsafe or irreversible.

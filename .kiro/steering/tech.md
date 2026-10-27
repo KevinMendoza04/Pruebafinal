@@ -8,7 +8,7 @@ inclusion: always
 - Spring Boot **3.5.x** (latest stable 3.5 patch). Do NOT use Spring Boot 4.
 - springdoc-openapi-starter-webmvc-ui 2.8.x, MapStruct 1.6.x (+ mapstruct-processor), jjwt 0.12.x (api/impl/jackson), Flyway (managed by Boot) + `flyway-database-postgresql`, PostgreSQL driver, `micrometer-registry-prometheus`, JaCoCo, ArchUnit (test), Testcontainers via `spring-boot-testcontainers` + `org.testcontainers:postgresql` + `junit-jupiter`, PostgreSQL image `postgres:16-alpine`.
 - Lombok: allowed ONLY in infrastructure classes (JPA entities, DTOs). NEVER in `domain`. Prefer Java records for DTOs and commands.
-- If a version combination does not compile or start, fix it with the smallest change and record it in `design.md`.
+- If a version combination does not compile or start, fix it with the smallest change and record it in `docs/design-notes.md`.
 
 ## Language rules (from the official guide)
 - ALL code, identifiers, packages, class/method names, README, docs/diagrams, commit messages: English.
