@@ -69,9 +69,9 @@
 
 | ID | Requirement | Where it will live | Verification | Status |
 |---|---|---|---|---|
-| INT-01 | technician-dispatch-service: POST /technician-dispatch, no JPA, no security | `technician-dispatch-service/` | integration test | NOT_STARTED |
-| INT-02 | Dispatch deterministic algorithm (CRC32 seed) | `technician-dispatch-service/domain/` | unit test | NOT_STARTED |
-| INT-03 | Dispatch 400 on invalid enum/missing field | `technician-dispatch-service/web/` | unit test | NOT_STARTED |
+| INT-01 | technician-dispatch-service: POST /technician-dispatch, no JPA, no security | `technician-dispatch-service/` | integration test | VERIFIED |
+| INT-02 | Dispatch deterministic algorithm (CRC32 seed) | `technician-dispatch-service/domain/TechnicianDispatcher` | unit test | VERIFIED |
+| INT-03 | Dispatch 400 on invalid enum/missing field | `technician-dispatch-service/web/handler/GlobalExceptionHandler` | unit test | VERIFIED |
 | INT-04 | RestClient adapter with 2s connect / 3s read timeout, no retries | `infrastructure/adapter/out/dispatch/` | integration test (mock server) | NOT_STARTED |
 | OBS-01 | `helpflow.tickets.created{category,priority}` counter | `infrastructure/adapter/out/metrics/` | metrics endpoint | NOT_STARTED |
 | OBS-02 | `helpflow.tickets.first_response` timer | metrics adapter | metrics endpoint | NOT_STARTED |
@@ -81,7 +81,7 @@
 | OBS-06 | `helpflow.tickets.escalated` counter | metrics adapter | metrics endpoint | NOT_STARTED |
 | OBS-07 | `helpflow.dispatch.failures` counter | metrics adapter | metrics endpoint | NOT_STARTED |
 | OBS-08 | TicketMetricsPort outbound port (Micrometer never leaks into use cases) | `application/port/out/TicketMetricsPort` | ArchUnit test | NOT_STARTED |
-| OBS-09 | Swagger/springdoc on both services; bearer JWT documented | `infrastructure/config/` + springdoc dep | browser review | NOT_STARTED |
+| OBS-09 | Swagger/springdoc on both services; bearer JWT documented | `infrastructure/config/` + springdoc dep | browser review | IMPLEMENTED |
 
 ## Part 5 — Testing, Docker, delivery (Quality 20 pts / Docs 10 pts)
 
@@ -100,8 +100,7 @@
 | TEST-11 | Scenario: N+1 query count proof | Hibernate-statistics test | `mvn verify` | NOT_STARTED |
 | DEP-01 | Multi-stage Dockerfile for each service | `support-ticket-service/Dockerfile`, `technician-dispatch-service/Dockerfile` | `docker build` | NOT_STARTED |
 | DEP-02 | docker-compose with both services + PostgreSQL | `docker-compose.yml` | `docker compose up` | NOT_STARTED |
-| DEP-03 | `.env.example` with placeholder values (no secrets) | `.env.example` | review | NOT_STARTED |
-| DOC-01 | README: description, endpoints, run local + docker, roles, assignment flow, transitions, SLA | `README.md` | review | NOT_STARTED |
+| DEP-03 | `.env.example` with placeholder values (no secrets) | `.env.example` | review | NOT_STARTED || DOC-01 | README: description, endpoints, run local + docker, roles, assignment flow, transitions, SLA | `README.md` | review | NOT_STARTED |
 | DOC-02 | Postman collection + environment (no secrets) | `postman/` | import + run | NOT_STARTED |
 | DOC-03 | 5 Mermaid diagrams | `docs/diagrams/` | visual review | NOT_STARTED |
 | DOC-04 | Evidence: metrics, overdue tickets, logs | `docs/evidence/` | review | NOT_STARTED |
