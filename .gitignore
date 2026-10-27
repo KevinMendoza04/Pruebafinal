@@ -24,3 +24,15 @@ Thumbs.db
 # Logs
 *.log
 logs/
+
+# Build output (dist folders)
+dist/
+
+# Eclipse / Spring Tool Suite
+.classpath
+.project
+.settings/
+bin/
+
+# NetBeans
+nbproject/
