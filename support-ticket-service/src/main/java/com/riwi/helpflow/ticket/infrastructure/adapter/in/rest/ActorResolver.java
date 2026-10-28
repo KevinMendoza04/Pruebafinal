@@ -3,26 +3,34 @@ package com.riwi.helpflow.ticket.infrastructure.adapter.in.rest;
 import com.riwi.helpflow.ticket.application.usecase.AuthenticatedActor;
 import com.riwi.helpflow.ticket.domain.model.Role;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 /**
- * Temporary actor resolver — reads X-User-Id and X-User-Role headers.
- * PROMPT 4 replaces this with a JWT-based resolver reading the SecurityContext.
- * WHY: allows integration tests to pass actor info without real security.
+ * Resolves the authenticated actor from the Spring Security context (populated by
+ * JwtAuthenticationFilter). The domain never reads SecurityContext directly.
  */
 @Component
 public class ActorResolver {
 
     public AuthenticatedActor resolve(HttpServletRequest request) {
-        String userId = request.getHeader("X-User-Id");
-        String role   = request.getHeader("X-User-Role");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if (userId != null && role != null) {
-            return new AuthenticatedActor(UUID.fromString(userId), Role.valueOf(role));
+        if (auth == null || !auth.isAuthenticated()
+                || !(auth.getPrincipal() instanceof UUID userId)) {
+            throw new IllegalStateException("No authenticated actor found in security context");
         }
-        // Default to admin for now (PROMPT 4 removes this default)
-        return new AuthenticatedActor(UUID.randomUUID(), Role.ROLE_ADMIN);
+
+        // Authority is already "ROLE_XXX" (set by JWT filter), matches Role enum values
+        String roleStr = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElse(Role.ROLE_USUARIO.name());
+
+        return new AuthenticatedActor(userId, Role.valueOf(roleStr));
     }
 }

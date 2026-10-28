@@ -31,16 +31,19 @@ public class BeanConfig {
 
     // ── Use cases ────────────────────────────────────────────────────────────
     @Bean
-    public RegisterUserUseCaseImpl registerUserUseCase(UserRepositoryPort userRepo, PasswordHasherPort hasher) {
-        return new RegisterUserUseCaseImpl(userRepo, hasher);
+    public RegisterUserUseCaseImpl registerUserUseCase(UserRepositoryPort userRepo,
+                                                        PasswordHasherPort hasher,
+                                                        @Value("${helpflow.corporate-email-domain:helpflow.com}") String emailDomain) {
+        return new RegisterUserUseCaseImpl(userRepo, hasher, emailDomain);
     }
 
     @Bean
     public AuthenticateUseCaseImpl authenticateUseCase(UserRepositoryPort userRepo,
                                                         PasswordHasherPort hasher,
                                                         TokenIssuerPort tokenIssuer,
+                                                        TicketMetricsPort metrics,
                                                         @Value("${helpflow.jwt.expiration-minutes:60}") long expMinutes) {
-        return new AuthenticateUseCaseImpl(userRepo, hasher, tokenIssuer, expMinutes * 60);
+        return new AuthenticateUseCaseImpl(userRepo, hasher, tokenIssuer, metrics, expMinutes * 60);
     }
 
     @Bean

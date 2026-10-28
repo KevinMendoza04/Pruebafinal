@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class TechnicianController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TechnicianDtos.TechnicianResponse> create(
             @Valid @RequestBody TechnicianDtos.CreateTechnicianRequest req,
             HttpServletRequest httpRequest) {
@@ -52,11 +54,13 @@ public class TechnicianController {
     }
 
     @GetMapping("/me")
+    @PreAuthorize("hasRole('TECNICO')")
     public ResponseEntity<TechnicianDtos.TechnicianResponse> me(HttpServletRequest httpRequest) {
         return ResponseEntity.ok(toResponse(useCase.getMyProfile(actorResolver.resolve(httpRequest))));
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TechnicianDtos.TechnicianResponse> getById(
             @PathVariable UUID id, HttpServletRequest httpRequest) {
         return ResponseEntity.ok(toResponse(

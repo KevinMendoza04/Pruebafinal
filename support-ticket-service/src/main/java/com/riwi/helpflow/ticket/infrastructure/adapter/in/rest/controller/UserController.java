@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +42,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDtos.UserResponse>> list(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -51,11 +53,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDtos.UserResponse> getById(@PathVariable UUID id, HttpServletRequest req) {
         return ResponseEntity.ok(toResponse(useCase.getUserById(actorResolver.resolve(req), id)));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDtos.UserResponse> update(
             @PathVariable UUID id, @Valid @RequestBody UserDtos.UpdateUserRequest body,
             HttpServletRequest req) {
@@ -65,6 +69,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDtos.UserResponse> changeStatus(
             @PathVariable UUID id, @RequestBody UserDtos.UpdateStatusRequest body,
             HttpServletRequest req) {

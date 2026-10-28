@@ -27,7 +27,7 @@ class RegisterUserUseCaseTest {
     RegisterUserUseCaseImpl useCase;
 
     @BeforeEach void setUp() {
-        useCase = new RegisterUserUseCaseImpl(userRepo, hasher);
+        useCase = new RegisterUserUseCaseImpl(userRepo, hasher, "helpflow.com");
     }
 
     private RegisterUserUseCase.Command cmd() {
