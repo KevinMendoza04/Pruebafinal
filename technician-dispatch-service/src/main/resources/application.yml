@@ -18,6 +18,9 @@ management:
   endpoint:
     health:
       show-details: always
+  health:
+    diskspace:
+      enabled: false
 
 springdoc:
   api-docs:

@@ -22,7 +22,9 @@ public class ActorResolver {
 
         if (auth == null || !auth.isAuthenticated()
                 || !(auth.getPrincipal() instanceof UUID userId)) {
-            throw new IllegalStateException("No authenticated actor found in security context");
+            // Let Spring Security's AuthenticationEntryPoint handle unauthenticated access
+            throw new org.springframework.security.authentication.InsufficientAuthenticationException(
+                    "No authenticated actor");
         }
 
         // Authority is already "ROLE_XXX" (set by JWT filter), matches Role enum values

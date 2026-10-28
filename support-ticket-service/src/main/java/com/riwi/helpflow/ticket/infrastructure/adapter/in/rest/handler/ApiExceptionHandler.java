@@ -98,6 +98,11 @@ public class ApiExceptionHandler {
     // ── Catch-all (500) ──────────────────────────────────────────────────────
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleUnexpected(Exception ex, HttpServletRequest req) {
+        // Spring Security AccessDeniedException must be handled here too (method-level security)
+        if (ex instanceof org.springframework.security.access.AccessDeniedException) {
+            return build(HttpStatus.FORBIDDEN, "forbidden", "Forbidden",
+                    "Acceso denegado: no tiene permisos para esta operación", req);
+        }
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "internal-error",
                 "Internal Server Error", "Ha ocurrido un error inesperado", req);
     }
