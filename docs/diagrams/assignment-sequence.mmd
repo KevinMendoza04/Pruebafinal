@@ -1,0 +1,44 @@
+%% Assignment Sequence — Two-Transaction Design
+sequenceDiagram
+    participant UC as CreateTicketUseCase
+    participant TX1 as CreateTicketTxAdapter (TX-1)
+    participant DSP as DispatchAdapter
+    participant TX2 as AssignTicketTxAdapter (TX-2)
+    participant DB as Database
+
+    UC->>TX1: createAndCommit(actor, cmd)
+    activate TX1
+    TX1->>DB: BEGIN TX
+    TX1->>DB: validate requester ACTIVO
+    TX1->>DB: INSERT ticket (ABIERTO + SLA)
+    TX1->>DB: INSERT history (CREATED)
+    TX1->>DB: COMMIT
+    deactivate TX1
+
+    UC->>DSP: suggest(ticketId, category, priority)
+    activate DSP
+    Note over DSP: 2s connect / 3s read timeout<br/>No retries
+    alt dispatch succeeds
+        DSP-->>UC: DispatchSuggestion(techCode, hours)
+    else dispatch fails/timeout
+        DSP-->>UC: DispatchServiceException
+        Note over UC: ticket already saved in TX-1<br/>safe to continue
+    end
+    deactivate DSP
+
+    UC->>TX2: assignAndCommit(ticketId, suggestion)
+    activate TX2
+    TX2->>DB: BEGIN TX
+    TX2->>DB: reload ticket
+    alt suggestion valid + eligible
+        TX2->>DB: lock technician (PESSIMISTIC_WRITE)
+        TX2->>DB: re-count active tickets
+        TX2->>DB: INSERT assignment
+        TX2->>DB: UPDATE ticket → ASIGNADO
+        TX2->>DB: INSERT history (ASSIGNED)
+    else no eligible
+        TX2->>DB: INSERT history (ASSIGNMENT_FAILED)
+        Note over TX2: ticket stays ABIERTO
+    end
+    TX2->>DB: COMMIT
+    deactivate TX2

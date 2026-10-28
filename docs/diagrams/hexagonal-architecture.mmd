@@ -1,0 +1,36 @@
+%% Hexagonal Architecture — HelpFlow support-ticket-service
+graph TB
+    subgraph "Domain (pure JDK, no Spring)"
+        DM["Models<br/>User, Ticket, Technician<br/>Assignment, TicketHistoryEntry, SlaPolicy"]
+        DS["Services<br/>TicketTransitionPolicy<br/>SlaCalculator<br/>TechnicianSelectionPolicy<br/>EscalationPolicy"]
+        DE["Exceptions<br/>DomainException + subclasses"]
+    end
+
+    subgraph "Application"
+        UC["Use Cases<br/>CreateTicket, Transition<br/>Cancel, Reassign<br/>Escalate, ManageUsers..."]
+        PI["Ports In<br/>use-case interfaces"]
+        PO["Ports Out<br/>Repository, Dispatch<br/>Metrics, Hasher, Token"]
+    end
+
+    subgraph "Infrastructure - In"
+        RC["REST Controllers<br/>Auth, Ticket, User<br/>Technician, Admin"]
+        DTO["DTOs + Validation"]
+        EH["ApiExceptionHandler<br/>ProblemDetail RFC 7807"]
+        TF["TraceIdFilter"]
+    end
+
+    subgraph "Infrastructure - Out"
+        JPA["JPA Entities + Repos"]
+        REST["RestClient<br/>Dispatch Adapter"]
+        MTR["Micrometer<br/>Metrics Adapter"]
+        SEC["JWT Filter<br/>SecurityConfig<br/>BCrypt"]
+    end
+
+    RC --> UC
+    UC --> DM
+    UC --> DS
+    UC --> PO
+    PO -.-> JPA
+    PO -.-> REST
+    PO -.-> MTR
+    PI -.-> UC

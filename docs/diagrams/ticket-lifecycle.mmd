@@ -1,0 +1,18 @@
+%% Ticket Lifecycle — State Machine
+stateDiagram-v2
+    [*] --> ABIERTO: create ticket
+    
+    ABIERTO --> ASIGNADO: system assignment / ADMIN
+    ABIERTO --> CANCELADO: owner USUARIO / ADMIN (obs required)
+
+    ASIGNADO --> EN_PROGRESO: assigned TECNICO / ADMIN
+    ASIGNADO --> CANCELADO: owner USUARIO / ADMIN (obs required)
+
+    EN_PROGRESO --> RESUELTO: assigned TECNICO / ADMIN (obs required)
+    EN_PROGRESO --> CANCELADO: ADMIN only (obs required)
+
+    RESUELTO --> CERRADO: owner USUARIO / ADMIN
+    RESUELTO --> EN_PROGRESO: reopen (TECNICO/USUARIO/ADMIN, obs required)
+
+    CERRADO --> [*]
+    CANCELADO --> [*]

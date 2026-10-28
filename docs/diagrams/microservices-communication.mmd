@@ -1,0 +1,19 @@
+%% Microservices Communication
+sequenceDiagram
+    participant C as Client
+    participant TS as support-ticket-service:8080
+    participant DB as PostgreSQL:5432
+    participant DS as technician-dispatch-service:8081
+
+    C->>TS: POST /tickets (JWT)
+    activate TS
+    TS->>DB: TX-1: insert ticket ABIERTO + history CREATED
+    DB-->>TS: ticket persisted
+    TS->>DS: POST /technician-dispatch (ticketId, categoria, prioridad)
+    activate DS
+    DS-->>TS: {tecnicoId, disponibilidad, tiempoEstimadoHoras}
+    deactivate DS
+    TS->>DB: TX-2: evaluate eligibility + assign + history ASSIGNED
+    DB-->>TS: assignment saved
+    TS-->>C: 200 {ticket, status, assignedTechnician}
+    deactivate TS
