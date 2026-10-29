@@ -19,7 +19,7 @@ A modular, secure and observable IT support ticket system built with **Java 21**
 
 - **domain/**: Rich models (`User`, `Ticket`, `Technician`, `Assignment`, `TicketHistoryEntry`, `SlaPolicy`), domain services (`TicketTransitionPolicy`, `SlaCalculator`, `TechnicianSelectionPolicy`, `EscalationPolicy`), business exceptions. No Spring/JPA/Jackson/Lombok.
 - **application/**: Use case interfaces (ports in) and implementations, outbound ports (interfaces). Orchestrates domain logic. The only tolerated Spring import is `@Transactional`.
-- **infrastructure/**: REST controllers, JPA entities, Spring Data repos, MapStruct-free manual mappers, RestClient dispatch adapter, Micrometer metrics adapter, JWT security, Flyway migrations.
+- **infrastructure/**: REST controllers, JPA entities, Spring Data repos, MapStruct mappers for DTOs (manual mapper for entities), RestClient dispatch adapter, Micrometer metrics adapter, JWT security, Flyway migrations.
 
 ### Ticket lifecycle
 

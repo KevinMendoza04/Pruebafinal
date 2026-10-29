@@ -1,53 +1,73 @@
-version: "3.8"
-
 services:
   db:
     image: postgres:16-alpine
+    container_name: helpflow-db
+    restart: unless-stopped
     environment:
       POSTGRES_DB: helpflow
-      POSTGRES_USER: helpflow
-      POSTGRES_PASSWORD: helpflow
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: ${DB_USERNAME:-helpflow}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change-me}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - helpflow-net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U helpflow"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-helpflow}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  dispatch-service:
+  technician-dispatch-service:
     build: ./technician-dispatch-service
+    container_name: helpflow-dispatch
+    restart: unless-stopped
     ports:
       - "8081:8081"
-    depends_on: []
+    networks:
+      - helpflow-net
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "localhost:8081/actuator/health"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  ticket-service:
+  support-ticket-service:
     build: ./support-ticket-service
+    container_name: helpflow-ticket
+    restart: unless-stopped
     ports:
       - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
-      dispatch-service:
+      technician-dispatch-service:
         condition: service_healthy
     environment:
       DB_URL: jdbc:postgresql://db:5432/helpflow
-      DB_USERNAME: helpflow
-      DB_PASSWORD: helpflow
-      JWT_SECRET: helpflow-production-secret-key-32-bytes-min!!
-      JWT_EXPIRATION_MINUTES: "60"
-      DISPATCH_BASE_URL: http://dispatch-service:8081
-      ADMIN_DOCUMENT: ADMIN-000
-      ADMIN_EMAIL: admin@helpflow.com
-      ADMIN_PASSWORD: Admin123!
-      CORPORATE_EMAIL_DOMAIN: helpflow.com
+      DB_USERNAME: ${DB_USERNAME:-helpflow}
+      DB_PASSWORD: ${DB_PASSWORD:-change-me}
+      JWT_SECRET: ${JWT_SECRET:-change-me-to-a-32-byte-secret-minimum}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-60}
+      DISPATCH_BASE_URL: http://technician-dispatch-service:8081
+      HELPFLOW_ADMIN_DOCUMENT: ${ADMIN_DOCUMENT:-ADMIN-001}
+      HELPFLOW_ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@helpflow.com}
+      HELPFLOW_ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      CORPORATE_EMAIL_DOMAIN: ${CORPORATE_EMAIL_DOMAIN:-helpflow.com}
+      ESCALATION_SCAN_INTERVAL: ${ESCALATION_SCAN_INTERVAL:-60}
+      ESCALATION_THRESHOLD_PERCENT: ${ESCALATION_THRESHOLD_PERCENT:-80}
+      DEMO_SEED_PASSWORD: ${DEMO_SEED_PASSWORD:-demo-pass}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-demo}
+    networks:
+      - helpflow-net
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "localhost:8080/actuator/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+volumes:
+  pgdata:
+
+networks:
+  helpflow-net:
+    driver: bridge

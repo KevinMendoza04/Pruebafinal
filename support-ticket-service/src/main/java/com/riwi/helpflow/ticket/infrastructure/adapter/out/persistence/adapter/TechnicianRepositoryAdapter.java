@@ -51,6 +51,7 @@ public class TechnicianRepositoryAdapter implements TechnicianRepositoryPort {
 
     @Override public boolean existsByCode(String code) { return repo.existsByCode(code); }
     @Override public boolean existsByUserId(UUID userId) { return repo.existsByUserId(userId); }
+    @Override public long count() { return repo.count(); }
 
     /** Populate active ticket count (ASIGNADO + EN_PROGRESO) for this technician. */
     private Technician withActiveCount(com.riwi.helpflow.ticket.infrastructure.adapter.out.persistence.entity.TechnicianEntity e) {

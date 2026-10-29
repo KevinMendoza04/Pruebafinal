@@ -19,4 +19,5 @@ public interface TechnicianRepositoryPort {
     Technician lockForUpdate(UUID id);
     boolean existsByCode(String code);
     boolean existsByUserId(UUID userId);
+    long count();
 }
