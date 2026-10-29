@@ -162,6 +162,84 @@ cd technician-dispatch-service && ./mvnw test
 - Main service: http://localhost:8080/swagger-ui.html
 - Dispatch service: http://localhost:8081/swagger-ui.html
 
+## Entity Relationship Diagram
+
+```mermaid
+%% ER Diagram — HelpFlow
+erDiagram
+    users ||--o{ tickets : "requester_id"
+    users ||--|| technicians : "1:1 profile"
+    technicians ||--o{ tickets : "assigned_technician_id"
+    tickets ||--o{ ticket_history : "1:N history"
+    tickets ||--o{ assignments : "1:N assignments"
+    sla_policies ||--o{ tickets : "priority → SLA deadline"
+
+    users {
+        uuid id PK
+        string document UK
+        string email UK
+        string full_name
+        string site
+        string department
+        enum role
+        enum status
+        string password_hash
+    }
+
+    technicians {
+        uuid id PK
+        uuid user_id FK UK
+        string code UK
+        set specialties
+        string site
+        string support_profile
+        enum status
+        int max_active_tickets
+    }
+
+    tickets {
+        uuid id PK
+        uuid requester_id FK
+        string title
+        string description
+        enum category
+        enum priority
+        string site
+        string affected_asset
+        enum status
+        uuid assigned_technician_id FK
+        timestamptz created_at
+        timestamptz sla_deadline
+        timestamptz escalated_at
+        bigint version
+    }
+
+    ticket_history {
+        uuid id PK
+        uuid ticket_id FK
+        enum event_type
+        enum from_status
+        enum to_status
+        uuid actor_id
+        string observation
+        timestamptz created_at
+    }
+
+    assignments {
+        uuid id PK
+        uuid ticket_id FK
+        uuid technician_id FK
+        timestamptz assigned_at
+        timestamptz unassigned_at
+    }
+
+    sla_policies {
+        uuid id PK
+        enum priority UK
+        int resolution_hours
+    }
+```
+
 ## Repository structure
 
 ```
