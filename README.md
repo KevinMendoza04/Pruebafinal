@@ -144,7 +144,7 @@ Cross-validation: CRITICA < ALTA < MEDIA < BAJA (strictly increasing). Changes a
 1. TX-1: validate requester ACTIVO, create ticket ABIERTO + SLA + history CREATED → commit
 2. Outside TX: call dispatch service (REST, 2s/3s timeouts, no retries)
 3. TX-2: evaluate suggestion (specialty, capacity, site, SLA ETA) or fallback → assign → commit
-4. No eligible: ticket stays ABIERTO, history ASSIGNMENT_FAILED, HTTP 201 returned
+4. No eligible: ticket stays ABIERTO, history ASSIGNMENT_FAILED, HTTP 200 returned
 
 ## Testing
 
